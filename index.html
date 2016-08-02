@@ -1,0 +1,47 @@
+<html>
+<head>
+  <title>Mapping Africa</title>
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.17.1/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="src/ol3-layerswitcher.css" />
+    <link rel="stylesheet" type="text/css" href="main.css">
+    
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js" type="text/javascript"></script>
+    <script src="showkml_test.js" defer="defer" type="text/javascript"></script>
+    <script src="src/ol3-layerswitcher.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/8d7b885f37.js"></script>
+    </head>
+    
+    <body onload=init()>
+        <div>
+            <p><h2>Mapping Africa: Mapping Interface</h2></p>
+            <p>Interface uses Javascript, OpenLayers 3, and jQuery; connects to GeoServer and PostgreSQL</p>
+        </div>
+        <div>
+            <div style="width:19%; float:right; padding: 5px">
+                <p>Press the SHIFT key to toggle the between the DRAW and DELETE tool. Press the 's' key to use your mouse normally. Alternatively, you can also use the buttons in this sidebar.</p>
+                <label>Tools: </label>
+                <button id="draw" class="button" title="DRAW MODE"><i class="fa fa-pencil fa-2x" aria-hidden="true"></i></button>
+                <button id="delete" class="button" title="DELETE MODE"><i class="fa fa-times fa-2x" aria-hidden="true"></i></button>
+                <button id="none" class="button" title="NO MODE"><i class="fa fa-ban fa-2x" aria-hidden="true"></i></button> 
+                
+                <p id="text"></p>
+                
+                <label>Geometry Type: </label>
+                <select id="geom_type">
+                    <option value="Polygon">Polygon</option>
+                    <option value="Circle">Circle</option>
+                    <option value="Rectangle">Rectangle</option>
+                </select> <br><br>
+    
+                <button id="delete_one" class="button" title="DELETE SELECTED FIELD"><i class="fa fa-eraser fa-2x" aria-hidden="true"></i></button>
+                <button id="save" class="button" title="SAVE"><i class="fa fa-floppy-o fa-2x" aria-hidden="true"></i></button>
+                <button id="delete_all" class="button" title="CLEAR ALL FIELDS"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></button> <br><br>
+                
+                <textarea id="data" rows="20" style="width:100%">Field geometries will appear here after saving.</textarea>
+            </div>
+            <div style="width:80%; height:80%; float:left" id="map"></div>
+        </div>
+        <br>
+    </body>
+</html>
