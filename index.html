@@ -15,7 +15,6 @@
     <body onload=init()>
         <div>
             <p><h2>Mapping Africa: Mapping Interface</h2></p>
-            <p>Interface uses Javascript, OpenLayers 3, and jQuery; connects to GeoServer and PostgreSQL</p>
         </div>
         <div>
             <div style="width:19%; float:right; padding: 5px">
@@ -38,10 +37,12 @@
                 <button id="save" class="button" title="SAVE"><i class="fa fa-floppy-o fa-2x" aria-hidden="true"></i></button>
                 <button id="delete_all" class="button" title="CLEAR ALL FIELDS"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></button> <br><br>
                 
-                <textarea id="data" rows="20" style="width:100%">Field geometries will appear here after saving.</textarea>
+                <textarea id="data" rows="15" style="width:100%">Field geometries will appear here after saving.</textarea>
             </div>
             <div style="width:80%; height:80%; float:left" id="map"></div>
         </div>
-        <br>
+        <div style="width:100%; float:left">
+            <p>Note: This interface uses Javascript, OpenLayers 3, and jQuery. It connects to GeoServer and PostgreSQL servers (not available through Github Pages).</p>
+        </div>
     </body>
 </html>
