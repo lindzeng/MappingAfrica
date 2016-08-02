@@ -1,1 +1,1 @@
-# clicktime-coffeedonut.github.io
+# MappingAfrica
