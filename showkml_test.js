@@ -6,13 +6,13 @@ function init() {
         undefinedHTML: '&nbsp;'
     });
 
-        // Create a group for image overlays and push layers on later
+    // Create a group for image overlays and push layers on later
     var overlayGroup = new ol.layer.Group({
         title: 'Image Overlays',
         layers: []
     });
-        
-        // Map
+    
+    // Map
     var map = new ol.Map({
         controls: ol.control.defaults({
             attributionOptions:  ({
@@ -49,8 +49,8 @@ function init() {
         ],
         target: document.getElementById('map'),
         view: new ol.View({
-            // The center coordinate should be passed as a parameter in init()
-            // If excluded, the map won't load
+            // Set to [0,0] when connected to db 
+            // (the ol.View#fit() function will handle)
             center: ol.proj.fromLonLat([26.9061152624, -12.0563896545]),
             zoom: 15,
             minZoom: 14,
@@ -101,7 +101,28 @@ function init() {
     overlayGroup.getLayers().push(falseColor_overlay);
     overlayGroup.getLayers().push(trueColor_overlay);
     
-    //map.getView().fit(trueColor_overlay.getExtent(), (map.getSize()));
+    // White bounding box KML layer
+    // Uncomment when connected to db
+    /*
+    var kmlLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            url: '', //insert KML URL from db
+            format: new ol.format.KML({extractStyles: false})
+        }),
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 255, 255, 0.0)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(255, 255, 255, 1.0)',
+                width: 2
+            })
+        })
+    });
+    kmlLayer.setMap(map);
+    var extent = kmlLayer.getSource().getExtent();
+    map.getView().fit(extent, map.getSize());
+    */
     
     // Toolbar and Mapped Fields layer
     var fields = new ol.Collection();
@@ -321,6 +342,6 @@ function init() {
         }
     }
     
-    // Default is draw
+    // Onload has the draw interaction active
     addDrawInteraction();
 }
