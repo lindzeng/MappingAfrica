@@ -1,63 +1,29 @@
-function init() {
-    // Mouse Position
-    var mousePositionControl = new ol.control.MousePosition({
-        coordinateFormat: ol.coordinate.createStringXY(3),
-        projection: 'EPSG:4326',
-        undefinedHTML: '&nbsp;'
-    });
+var map, overlayGroup;
+var selection = document.getElementById('location');
+var reset = document.getElementById('reset');
 
-    // Create a group for image overlays and push layers on later
-    var overlayGroup = new ol.layer.Group({
-        title: 'Image Overlays',
-        layers: []
-    });
+selection.onchange = function() {
+    selection.disabled = true;
+    loadMap(selection.value);
+}
+
+reset.onclick = function() {
+    location.reload();
+}
+
+function loadMap(layer) {
+    // Hard code center coordinate (will not need once KML can be loaded)
+    var center;
+    if (layer == '01JUL13') {center = [26.9061152624, -12.0563896545];}
+    else if (layer == '02DEC13') {center = [26.6270101607, -17.0663201263];}
+    else if (layer == '02DEC14') {center = [32.0888837002, -13.6018754311];}
+    else if (layer == '02MAY10') {center = [28.4610467331, -14.4945872034];}
+    else if (layer == '03AUG13') {center = [26.6645146344, -12.0643086222];}
+    else if (layer == '05AUG12') {center = [26.8452796098, -16.8496554409];}
+    else if (layer == '06AUG09') {center = [28.752221122, -15.8503449298];}
+    else {center = [28.2668752636, -15.2898609346];}
     
-    // Map
-    var map = new ol.Map({
-        controls: ol.control.defaults({
-            attributionOptions:  ({
-                collapsible: false
-            })
-        }).extend([mousePositionControl]),
-        layers: [
-            new ol.layer.Group({
-                title: 'Base map',
-                layers: [
-                    new ol.layer.Tile({
-                        title: 'Mapbox Satellite Imagery',
-                        type: 'base',
-                        visible: false,
-                        source: new ol.source.XYZ({
-                            attributions: '&copy; <a href="https://www.mapbox.com/map-feedback/">Mapbox</a>',
-                            tileSize: [512, 512],
-                            url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGluZHplbmciLCJhIjoiY2lwNzJ0amIwMDBqN3Q2bHl5anJqZXowbyJ9.dauHM2mZRuajvxcAOALHsA'
-                        })
-                    }),
-                    new ol.layer.Tile({
-                        title: 'Bing Satellite Imagery',
-                        type: 'base',
-                        visible: true,
-                        source: new ol.source.BingMaps({
-                            key: 'esMqD5pajkiIvp26krWq~xK2nID-glxBU5PYtVmuoMw~AhanXg6fK3a8vRhyc1O-FgeHTWfzerYO4ptmwz9eGjcUh53y7Zu5cU4BT_en6fzW',
-                            imagerySet: 'Aerial'
-                            
-                        })
-                    })
-                ]
-            }),
-            overlayGroup
-        ],
-        target: document.getElementById('map'),
-        view: new ol.View({
-            // Set to [0,0] when connected to db 
-            // (the ol.View#fit() function will handle)
-            center: ol.proj.fromLonLat([26.9061152624, -12.0563896545]),
-            zoom: 15,
-            minZoom: 14,
-            maxZoom: 17
-        })
-    });
-    
+    // Add controls to Zambia maps:
     // Zoom control
     var zoomslider = new ol.control.ZoomSlider();
     
@@ -73,7 +39,7 @@ function init() {
     var trueColor = new ol.source.ImageWMS({
         url: 'http://localhost:8080/geoserver/MappingAfrica/wms',
         params: {
-            layers: 'MappingAfrica:test1_scaled_warp',
+            layers: 'MappingAfrica:' + layer + '_final',
             styles: 'true_color'
         },
         serverType: 'geoserver'
@@ -87,8 +53,8 @@ function init() {
     var falseColor = new ol.source.ImageWMS({
         url: 'http://localhost:8080/geoserver/MappingAfrica/wms',
         params: {
-                layers: 'MappingAfrica:test1_scaled_warp',
-                styles: 'false_color'
+            layers: 'MappingAfrica:' + layer + '_final',
+            styles: 'false_color'
             },
         serverType: 'geoserver'
     });
@@ -100,6 +66,13 @@ function init() {
     
     overlayGroup.getLayers().push(falseColor_overlay);
     overlayGroup.getLayers().push(trueColor_overlay);
+    
+    map.setView(new ol.View({
+        center: ol.proj.fromLonLat(center),
+        zoom: 16,
+        minZoom: 14,
+        maxZoom: 18
+    }));
     
     // White bounding box KML layer
     // Uncomment when connected to db
@@ -125,6 +98,7 @@ function init() {
     */
     
     // Toolbar and Mapped Fields layer
+    // var fields = new ol.Collection();
     var fields = new ol.Collection();
     var fieldsLayer = new ol.layer.Vector({
         source: new ol.source.Vector({features: fields}),
@@ -144,7 +118,7 @@ function init() {
             })
         })
     });
-    fieldsLayer.setMap(map); 
+    fieldsLayer.setMap(map);
     
     var modify = new ol.interaction.Modify({
         features: fields,
@@ -271,6 +245,7 @@ function init() {
         
         // NONE 
         if (event.keyCode == 83) /* 's' key */ {
+            map.removeInteraction(modify);
             map.removeInteraction(draw);
             drawOn = false;
             map.removeInteraction(select);
@@ -299,6 +274,7 @@ function init() {
     }
     
     noneMode.onclick = function() {
+        map.removeInteraction(modify);
         map.removeInteraction(draw);
         drawOn = false;
         map.removeInteraction(select);
@@ -344,4 +320,61 @@ function init() {
     
     // Onload has the draw interaction active
     addDrawInteraction();
+}
+
+function init() {
+    // Mouse Position
+    var mousePositionControl = new ol.control.MousePosition({
+        coordinateFormat: ol.coordinate.createStringXY(3),
+        projection: 'EPSG:4326',
+        undefinedHTML: '&nbsp;'
+    });
+    
+    // Create a group for image overlays and push layers on later
+    overlayGroup = new ol.layer.Group({
+        title: 'Image Overlays',
+        layers: []
+    });
+
+    // Default map
+    map = new ol.Map({
+        controls: ol.control.defaults({
+            attributionOptions:  ({
+                collapsible: false
+            })
+        }).extend([mousePositionControl]),
+        layers: [
+            new ol.layer.Group({
+                title: 'Base map',
+                layers: [
+                    new ol.layer.Tile({
+                        title: 'Mapbox Satellite Imagery',
+                        type: 'base',
+                        visible: false,
+                        source: new ol.source.XYZ({
+                            attributions: '&copy; <a href="https://www.mapbox.com/map-feedback/">Mapbox</a>',
+                            tileSize: [512, 512],
+                            url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGluZHplbmciLCJhIjoiY2lwNzJ0amIwMDBqN3Q2bHl5anJqZXowbyJ9.dauHM2mZRuajvxcAOALHsA'
+                        })
+                    }),
+                    new ol.layer.Tile({
+                        title: 'Bing Satellite Imagery',
+                        type: 'base',
+                        visible: true,
+                        source: new ol.source.BingMaps({
+                            key: 'esMqD5pajkiIvp26krWq~xK2nID-glxBU5PYtVmuoMw~AhanXg6fK3a8vRhyc1O-FgeHTWfzerYO4ptmwz9eGjcUh53y7Zu5cU4BT_en6fzW',
+                            imagerySet: 'Aerial'
+                            
+                        })
+                    })
+                ]
+            }),
+            overlayGroup
+        ],
+        target: document.getElementById('map'),
+        view: new ol.View({
+            center: [0, 0],
+            zoom: 2
+        })
+    });
 }
