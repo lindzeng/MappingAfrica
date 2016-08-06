@@ -156,7 +156,6 @@ function loadMap(layer) {
             // Use diagonal to form rectangle
             value = 'LineString';
             maxPoints = 2;
-            // geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
             geometryFunction = function(coordinates, geometry) {
                 if (!geometry) {
                     geometry = new ol.geom.Polygon(null);
@@ -168,6 +167,10 @@ function loadMap(layer) {
                 ]);
                 return geometry;
             }; 
+        }
+        if (value === 'Square') {
+            value = 'Circle'
+            geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
         }
         
         draw = new ol.interaction.Draw({
