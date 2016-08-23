@@ -4,24 +4,38 @@ var reset = document.getElementById('reset');
 
 selection.onchange = function() {
     selection.disabled = true;
-    loadMap(selection.value);
+    kml_name = selection.value;
+    jQuery.ajax({
+        type: "GET",
+        url: 'getImage.php',
+        dataType: 'text',
+        data: {kml:kml_name},
+        success: function(responseText) {
+            console.log(responseText);
+            image_name = responseText;
+            console.log(image_name);
+            loadMap(image_name);
+        }
+    });
 }
 
 reset.onclick = function() {
     location.reload();
 }
 
-function loadMap(layer) {
+function loadMap(image_name) {
+    var geoserverUrl = 'http://localhost:8080/geoserver/MappingAfrica/wms';
+    
     // Hard code center coordinate (will not need once KML can be loaded)
-    var center;
-    if (layer == '01JUL13') {center = [26.9061152624, -12.0563896545];}
-    else if (layer == '02DEC13') {center = [26.6270101607, -17.0663201263];}
-    else if (layer == '02DEC14') {center = [32.0888837002, -13.6018754311];}
-    else if (layer == '02MAY10') {center = [28.4610467331, -14.4945872034];}
-    else if (layer == '03AUG13') {center = [26.6645146344, -12.0643086222];}
-    else if (layer == '05AUG12') {center = [26.8452796098, -16.8496554409];}
-    else if (layer == '06AUG09') {center = [28.752221122, -15.8503449298];}
-    else {center = [28.2668752636, -15.2898609346];}
+    // var center;
+    //if (layer == '01JUL13') {center = [26.9061152624, -12.0563896545];}
+    //else if (layer == '02DEC13') {center = [26.6270101607, -17.0663201263];}
+    //else if (layer == '02DEC14') {center = [32.0888837002, -13.6018754311];}
+    //else if (layer == '02MAY10') {center = [28.4610467331, -14.4945872034];}
+    //else if (layer == '03AUG13') {center = [26.6645146344, -12.0643086222];}
+    //else if (layer == '05AUG12') {center = [26.8452796098, -16.8496554409];}
+    //else if (layer == '06AUG09') {center = [28.752221122, -15.8503449298];}
+    //else {center = [28.2668752636, -15.2898609346];}
     
     // Add controls to Zambia maps:
     // Zoom control
@@ -37,9 +51,9 @@ function loadMap(layer) {
     
     // Satellite image overlays obtained as WMS sources from GeoServer
     var trueColor = new ol.source.ImageWMS({
-        url: 'http://localhost:8080/geoserver/MappingAfrica/wms',
+        url: geoserverUrl,
         params: {
-            layers: 'MappingAfrica:' + layer + '_final',
+            layers: 'MappingAfrica:' + image_name,
             styles: 'true_color'
         },
         serverType: 'geoserver'
@@ -51,9 +65,9 @@ function loadMap(layer) {
     });
     
     var falseColor = new ol.source.ImageWMS({
-        url: 'http://localhost:8080/geoserver/MappingAfrica/wms',
+        url: geoserverUrl,
         params: {
-            layers: 'MappingAfrica:' + layer + '_final',
+            layers: 'MappingAfrica:' + image_name,
             styles: 'false_color'
             },
         serverType: 'geoserver'
@@ -68,18 +82,16 @@ function loadMap(layer) {
     overlayGroup.getLayers().push(trueColor_overlay);
     
     map.setView(new ol.View({
-        center: ol.proj.fromLonLat(center),
-        zoom: 16,
+        center: [0,0],
+        zoom: 14,
         minZoom: 14,
         maxZoom: 18
     }));
     
     // White bounding box KML layer
-    // Uncomment when connected to db
-    /*
     var kmlLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
-            url: '', //insert KML URL from db
+            url: 'KML/' + kml_name,
             format: new ol.format.KML({extractStyles: false})
         }),
         style: new ol.style.Style({
@@ -92,13 +104,20 @@ function loadMap(layer) {
             })
         })
     });
+    var kmlSource = kmlLayer.getSource();
+    // KML must be fully loaded before getting extent info
+    kmlSource.once('change',function(e){
+        if(kmlSource.getState() === 'ready') {
+            var extent = kmlSource.getExtent();
+            // console.log(extent);
+            // Center map around KML
+            map.getView().fit(extent, map.getSize());
+        }   
+    });
     kmlLayer.setMap(map);
-    var extent = kmlLayer.getSource().getExtent();
-    map.getView().fit(extent, map.getSize());
-    */
+    
     
     // Toolbar and Mapped Fields layer
-    // var fields = new ol.Collection();
     var fields = new ol.Collection();
     var fieldsLayer = new ol.layer.Vector({
         source: new ol.source.Vector({features: fields}),
