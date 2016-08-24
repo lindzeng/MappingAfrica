@@ -31,33 +31,38 @@
             <button id="reset">RESET</button><br><br>
         </div>
         <div>
-            <div style="width:19%; float:right; padding: 5px">
-                <p>Press the SHIFT key to toggle the between the DRAW and DELETE tool. Press the 's' key to use your mouse normally. Alternatively, you can also use the buttons in this sidebar.</p>
-                <label>Tools: </label>
-                <button id="draw" class="button" title="DRAW MODE"><i class="fa fa-pencil fa-2x" aria-hidden="true"></i></button>
-                <button id="delete" class="button" title="DELETE MODE"><i class="fa fa-times fa-2x" aria-hidden="true"></i></button>
-                <button id="none" class="button" title="NO MODE"><i class="fa fa-ban fa-2x" aria-hidden="true"></i></button> 
-                
-                <p id="text"></p>
-                
-                <label>Geometry Type: </label>
+            <div id="column-center">
+                <ul class="toolbar">
+                    <li><button id="draw" class="button" title="DRAW MODE"><i class="fa fa-pencil fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                    <li><button id="delete" class="button" title="DELETE MODE"><i class="fa fa-times fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                    <li><button id="none" class="button" title="NO MODE"><i class="fa fa-ban fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                    <li><button id="delete_one" class="button" title="DELETE SELECTED FIELD"><i class="fa fa-eraser fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                    <li><button id="save" class="button" title="SAVE"><i class="fa fa-floppy-o fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                    <li><button id="delete_all" class="button" title="CLEAR ALL FIELDS"><i class="fa fa-trash-o fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                </ul>
                 <select id="geom_type">
                     <option value="Polygon">Polygon</option>
                     <option value="Circle">Circle</option>
                     <option value="Rectangle">Rectangle</option>
                     <option value="Square">Square</option>
-                </select> <br><br>
-    
-                <button id="delete_one" class="button" title="DELETE SELECTED FIELD"><i class="fa fa-eraser fa-2x" aria-hidden="true"></i></button>
-                <button id="save" class="button" title="SAVE"><i class="fa fa-floppy-o fa-2x" aria-hidden="true"></i></button>
-                <button id="delete_all" class="button" title="CLEAR ALL FIELDS"><i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></button> <br><br>
-                
-                <textarea id="data" rows="15" style="width:100%">Field geometries will appear here after saving.</textarea>
+                </select>
+                <ul class="toolbar">
+                <li><button id="collapse" class="button" title="COLLAPSIBLE"><i class="fa fa-exchange fa-2x fa-fw" aria-hidden="true"></i></button></li>
+                </ul>
             </div>
-            <div style="width:80%; height:80%; float:left" id="map"></div>
+            <div id="column-right">
+                <p><h5>Press the SHIFT key to toggle the between the DRAW and DELETE tool. Press the 's' key to use your mouse normally. Alternatively, you can also use the buttons in the sidebar.</h5></p> 
+                
+                <p id="text"><h5></h5></p>
+                <textarea id="data" rows="15" style="width:100%">Field geometries will appear here after saving.</textarea>
+                <!--Note for GH-pages-->
+                <p><h6><b>Note:</b> This interface, built with JavaScript, OpenLayers 3, and jQuery, is a demonstration of the tools only. The layer switcher for satellite imagery is obtained by connecting to GeoServer and PostgreSQL servers (not available through GitHub Pages). For more information about the Mapping Africa project, click <a href="http://mappingafrica.princeton.edu/" target="_blank">here</a>.</h6></p>
+            </div>
+            <div id="column-left">
+                <div id="map"></div>
+            </div>
         </div>
         <div style="width:100%; float:left">
-            <p>Note: This interface, built with JavaScript, OpenLayers 3, and jQuery, is a demonstration of the tools only. The layer switcher satellite imagery is obtained by connecting to GeoServer and PostgreSQL servers (not available through GitHub Pages). For more information about the Mapping Africa project, click <a href="http://mappingafrica.princeton.edu/" target="_blank">here</a>.</p>
         </div>
     </body>
 </html>

@@ -23,6 +23,29 @@ reset.onclick = function() {
     location.reload();
 }
 
+// Collapsible sidebar
+$(function() {
+    // $('#column-right').stop().animate({'margin-right':'-1000px'}, 1000);
+    
+    function toggleDiv() {
+        var $inner = $('#column-right');
+        if ($inner.css('margin-right') == '-1000px') {
+            $inner.animate({'margin-right': '0'});
+            $('#column-left').animate({'width': '80%'}, {queue: false});
+            $('#column-left').animate({'height': '80%'}, {queue: false});
+        } else {
+            $inner.animate({'margin-right':'-1000px'});
+            $('#column-left').animate({'width': '95%'}, {queue: false});
+            $('#column-left').animate({'height': '95%'}, {queue: false});
+            $('html, body').animate({
+                scrollTop: $('#map').offset().top}, {queue: false});
+        }
+    }
+    $('#collapse').bind('click', function() {
+        toggleDiv();
+    });
+});
+
 function loadMap(image_name) {
     var geoserverUrl = 'http://localhost:8080/geoserver/MappingAfrica/wms';
     
@@ -354,7 +377,7 @@ function init() {
     
     // Create a group for image overlays and push layers on later
     overlayGroup = new ol.layer.Group({
-        title: 'Image Overlays',
+        title: 'Satellite Image Overlays',
         layers: []
     });
 

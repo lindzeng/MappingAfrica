@@ -2,3 +2,48 @@ html, body {
     font-family: 'Lato', sans-serif;
     font-weight: 300; 
 }
+
+#column-left {
+    float: left; 
+    width: 80%;
+    height: 80%;
+}
+
+#column-right {
+    float: right;
+    width: 14%;
+}
+
+#column-center {
+    display: inline-block;
+    width: 5%;
+}
+
+.toolbar {
+    list-style-type: none;
+    padding: 18px; 
+    margin: 0;
+}
+
+.toolbar li {
+    margin: 10px 0;
+}
+
+#geom_type {
+    width: 65px;
+    overflow: hidden;
+    margin: 5px;
+    border: 1px solid #ccc;
+}
+
+h5 {
+    font-size: 75%;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+}
+
+h6 {
+    font-size: 60%;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+}
