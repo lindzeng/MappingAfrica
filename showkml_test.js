@@ -55,6 +55,8 @@ function loadMap(image_name) {
                 drawMode.disabled = true;
                 deleteMode.disabled = true;
                 noneMode.disabled=true;
+                map.removeInteraction(draw);
+                map.removeInteraction(modify);
                 
             } else {
                 $('#column-right').animate({'margin-right':'-1000px'});
@@ -66,6 +68,7 @@ function loadMap(image_name) {
                 // Able tools when sidebar is visible
                 drawMode.disabled = false;
                 noneMode.disabled=false;
+                addDrawInteraction();
             }
         }
         $('#collapse').bind('click', function() {
