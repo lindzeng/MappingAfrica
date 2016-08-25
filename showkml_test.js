@@ -2,6 +2,15 @@ var map, overlayGroup;
 var selection = document.getElementById('location');
 var reset = document.getElementById('reset');
 
+// Tools
+var text = document.getElementById('text');
+var typeSelect = document.getElementById('geom_type');
+var draw, select, drawOn, selectOn;
+var deleteMode = document.getElementById('delete');
+var drawMode = document.getElementById('draw');
+var noneMode = document.getElementById('none');
+var deleteOne = document.getElementById('delete_one');
+
 selection.onchange = function() {
     selection.disabled = true;
     kml_name = selection.value;
@@ -23,30 +32,47 @@ reset.onclick = function() {
     location.reload();
 }
 
-// Collapsible sidebar
-$(function() {
-    // $('#column-right').stop().animate({'margin-right':'-1000px'}, 1000);
-    
-    function toggleDiv() {
-        var $inner = $('#column-right');
-        if ($inner.css('margin-right') == '-1000px') {
-            $inner.animate({'margin-right': '0'});
-            $('#column-left').animate({'width': '80%'}, {queue: false});
-            $('#column-left').animate({'height': '80%'}, {queue: false});
-        } else {
-            $inner.animate({'margin-right':'-1000px'});
-            $('#column-left').animate({'width': '95%'}, {queue: false});
-            $('#column-left').animate({'height': '95%'}, {queue: false});
-            $('html, body').animate({
-                scrollTop: $('#map').offset().top}, {queue: false});
-        }
-    }
-    $('#collapse').bind('click', function() {
-        toggleDiv();
-    });
-});
-
 function loadMap(image_name) {
+    // Collapse sidebar (otherwise tooltip and mouse pointer are in diff.            locations)
+    $('#column-right').css('margin-right', '-1000px');
+    $('#column-left').css('width', '95%');
+    $('#column-left').css('height', '95%');
+    $('html, body').animate({
+                    scrollTop: $('#map').offset().top}, {queue: false});
+    
+    // Update to reflect new size of map (OL3)
+    map.updateSize();
+    
+    // Toggle collapsible sidebar
+    $(function() {
+        function toggleDiv() {
+            if ($('#column-right').css('margin-right') == '-1000px') {
+                $('#column-right').animate({'margin-right': '0'});
+                $('#column-left').animate({'width': '80%'}, {queue: false});
+                $('#column-left').animate({'height': '80%'}, {queue: false});
+                
+                // Disable tools when sidebar is visible
+                drawMode.disabled = true;
+                deleteMode.disabled = true;
+                noneMode.disabled=true;
+                
+            } else {
+                $('#column-right').animate({'margin-right':'-1000px'});
+                $('#column-left').animate({'width': '95%'}, {queue: false});
+                $('#column-left').animate({'height': '95%'}, {queue: false});
+                $('html, body').animate({
+                    scrollTop: $('#map').offset().top}, {queue: false});
+                
+                // Able tools when sidebar is visible
+                drawMode.disabled = false;
+                noneMode.disabled=false;
+            }
+        }
+        $('#collapse').bind('click', function() {
+            toggleDiv();
+        });
+    });
+    
     var geoserverUrl = 'http://localhost:8080/geoserver/MappingAfrica/wms';
     
     // Hard code center coordinate (will not need once KML can be loaded)
@@ -178,14 +204,6 @@ function loadMap(image_name) {
         }) 
     });
     
-    var text = document.getElementById('text');
-    var typeSelect = document.getElementById('geom_type');
-    var draw, select, drawOn, selectOn;
-    var deleteMode = document.getElementById('delete');
-    var drawMode = document.getElementById('draw');
-    var noneMode = document.getElementById('none');
-    var deleteOne = document.getElementById('delete_one');
-    
     function addDrawInteraction() {
         var value = typeSelect.value;
         var geometryFunction, maxPoints;
@@ -241,7 +259,6 @@ function loadMap(image_name) {
         map.removeInteraction(select);
         selectOn = false;
         map.addInteraction(modify);
-        text.innerHTML = "<b>DRAW TOOL:</b> Choose geometry type for mapping.";
         typeSelect.disabled = false;
         drawMode.disabled = true;
         deleteMode.disabled = false;
@@ -267,9 +284,6 @@ function loadMap(image_name) {
         map.removeInteraction(modify);
         map.removeInteraction(draw);
         drawOn = false;
-        
-        text.innerHTML = "<b>DELETE TOOL:</b> First, single click to select the field you want to delete. To delete, press 'd' or click on the eraser icon below.";
-        
         typeSelect.disabled = true;
         drawMode.disabled = false;
         deleteMode.disabled = true;
@@ -295,7 +309,7 @@ function loadMap(image_name) {
             drawOn = false;
             map.removeInteraction(select);
             selectOn = false;
-            text.innerHTML = "<b>NO TOOL IN USE</b>";
+            // text.innerHTML = "<b>NO TOOL IN USE</b>";
             deleteMode.disabled = false;
             drawMode.disabled = false;
             noneMode.disabled = true;
@@ -324,7 +338,7 @@ function loadMap(image_name) {
         drawOn = false;
         map.removeInteraction(select);
         selectOn = false;            
-        text.innerHTML = "<b>NO TOOL IN USE</b>";
+        // text.innerHTML = "<b>NO TOOL IN USE</b>";
         deleteMode.disabled = false;
         drawMode.disabled = false;
         noneMode.disabled = true;

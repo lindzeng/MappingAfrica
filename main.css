@@ -12,6 +12,7 @@ html, body {
 #column-right {
     float: right;
     width: 14%;
+    margin-right: 0;
 }
 
 #column-center {
